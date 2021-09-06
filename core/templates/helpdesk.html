@@ -1,0 +1,206 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/a4e02881f4.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+    <style rel="stylesheet" >
+    
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <div class="sidebar">
+        <h2>sidebar</h2>
+        <nav>
+            <ul>
+                <li><a href=""><i class="fas fa-home"></i></a>Home</li>
+                <li><a href=""><i class="fas fa-user"></i></a>Messages</li>
+                <li><a href=""><i class="fas fa-inbox"></i></a>About</li>
+                <li><a href=""><i class="fas fa-address-card"></i></a>users</li>
+            </ul>
+        </nav>
+
+        <div class="socailmedia">
+            <li><a href=""><i class="fab fa-facebook-square"></i></a></li>
+        </div>
+    </div>
+    <div class="main_content">
+
+        <div class="header">
+            <li><a href=""><i class="fas fa-sliders-h"></i></a> Conversation !</li>
+        </div>
+        {% for post in posts %}
+        <div class="info post-element" data-postid="{{post.id}}">
+            <div class="form-check radio" style="display:flex;">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                <div class="user-info">
+                    <h4>{{post.from.name}}</h>
+                    <h5>Facebook post</h5>
+                </div>
+            </div>
+            <h4 style="padding: 5px;">{{post.message}}</h4>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="main_content_first">
+        <div class="header">Admin name!</div>
+        <div class="scroll">
+            {% for post in posts %}
+                {% if forloop.counter == 1 %}
+                <div class="right-info-container" id="{{post.id}}">
+                {% else %}
+                <div class="right-info-container" id="{{post.id}}" style="display:none;">
+                {% endif %}
+                    <div class="right-info">
+                        <div class="name-header">
+                            <div class="left-info">
+                                <div class="thumbnail">
+                                    <img class="profile-image" src="https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1926306577551959&height=50&width=50&ext=1633491644&hash=AeRC2kl2dq0rZhBiX-0"/>
+                                </div>
+                                <div class="name-info" style="/*! padding-bottom: 16px; */">
+                                    <div class="user-name">{{post.from.name}}</div>
+                                    <div class="time">18 April</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="post-content">{{post.message}}</div>
+                        {% if post.full_picture %}
+                        <img style="width: 100%" src="{{post.full_picture}}"/>
+                        {% endif %}
+                        <div class="feedback-info">
+                            <div class="feedback-emojis">
+                            <i class="icons laugh-icon"></i>
+                            <i class="icons angry-icon"></i>
+                            <i class="icons wow-icon"></i>
+                            1000
+                            </div>
+                            <div class="threads-and-share">
+                            <div class="threads"> {{post.comments|length}} comments</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% for comment in post.comments %}
+                        <div class="right-info">
+                            <div class="post-content">{{comment.message}}</div>
+                            <div class="feedback-info">
+                                <div class="feedback-emojis">
+                                <i class="icons laugh-icon"></i>
+                                <i class="icons angry-icon"></i>
+                                <i class="icons wow-icon"></i>
+                                </div>
+                                <div class="threads-and-share">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comment-sender">{{comment.from.name}} {{comment.created_time}}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="input">
+            <input type="hidden" class="formVal" name="page-access-token" id="page-access-token" value="{{page_access_token}}">
+            <input type="hidden" class="formVal" name="post-id" id="current-post-id" value="{{posts.0.id}}">
+            <input id="message-content" class="msg formVal" name="message" onkeypress="sendMessage(event);" placeholder="Send a message"/>
+        </div>
+    </div>
+    <div class="main_content_second">
+        <div class="header">
+            <div class="thumbnail">
+                <img class="profile-image" src="https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1926306577551959&height=50&width=50&ext=1633491644&hash=AeRC2kl2dq0rZhBiX-0"/>
+            </div>
+            <br>
+            <h5>Adarsh manwal</h5>
+            <br>
+            <p><span class="dot"></span> Online</p>
+            <br>
+            <button type="button" class="btn btn-light"><i class="fas fa-phone-alt"> </i> &ensp;Call&ensp;</button>
+            <button type="button" class="btn btn-light"><i class="fas fa-user"></i>&ensp;profile&ensp;</button>
+            <button type="button" class="btn btn-light">
+            <a href="{% url 'logout' %}" style="color: black;">Logout</a>
+            </button>
+
+        </div>
+        <div class="info">
+            <h4>Customer details</h4>
+            <hr>
+            <p>Email - Adarshmawnal9@gmail.com</p>
+            <p>first name - Adarh </p>
+            <p>Last name - manwal </p>
+            <p>phone number - 8279636725 </p>
+
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var elements = document.getElementsByClassName("post-element");
+
+    var clickFunction = function() {
+        var postId = this.getAttribute("data-postid");
+
+        var divsToHide = document.getElementsByClassName("right-info-container"); //divsToHide is an array
+        for(var i = 0; i < divsToHide.length; i++){
+            divsToHide[i].style.display = "none";
+        }
+
+        document.getElementById(postId).style.display = 'block';
+    };
+
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener('click', clickFunction, false);
+    }
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+
+    function sendMessage(event) {
+        var key = event.keyCode;
+        if (key === 13) {
+            var elements = document.getElementsByClassName("formVal");
+            var formData = new FormData();
+            for(var i=0; i<elements.length; i++)
+            {
+                formData.append(elements[i].name, elements[i].value);
+            }
+            var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function()
+                {
+                    if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    {
+                        document.getElementById("message-content").value = "";
+                        alert("Posted comment successfully!! Please refresh page to see new comments");
+                    }
+                }
+                xmlHttp.open("post", "/send-post-comment");
+                xmlHttp.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                xmlHttp.send(formData);
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+</html>
